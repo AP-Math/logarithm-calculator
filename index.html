@@ -64,7 +64,7 @@
 
       if (x > 0 && base > 0 && base !== 1) {
         const result = Math.log(x) / Math.log(base);
-        resultEl.textContent = `log base ${base} of ${x} = ${result.toFixed(6)}`;
+        resultEl.textContent = `log base ${base} of ${x} = ${result.toFixed(3)}`;
       } else {
         resultEl.textContent = "Invalid input. x > 0, base > 0 and base ≠ 1.";
       }
