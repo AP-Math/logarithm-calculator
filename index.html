@@ -73,7 +73,9 @@
 </div>
 
 <script>
-  let useCount = parseInt(localStorage.getItem('logCalcUseCount') || '0');
+  // Vynuluj počítadlo při načtení stránky
+  localStorage.removeItem('logCalcUseCount');
+  let useCount = 0;
 
   function calculateLog() {
     useCount++;
