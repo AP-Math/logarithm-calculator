@@ -72,8 +72,8 @@
       if (x > 0 && base > 0 && base !== 1) {
         const result = Math.log(x) / Math.log(base);
         const latexOutput = `\\( \\log_{${base}} ${x} = ${result.toFixed(3)} \\)`;
-        <br>
-        const powerOutput = `\\( \\text{ <br>což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
+        <br>  <br>
+        const powerOutput = `\\( \\text{což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
         resultEl.innerHTML = latexOutput + "<br>" + powerOutput;
         if (window.MathJax) MathJax.typesetPromise();
       } else {
