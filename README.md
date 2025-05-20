@@ -1,2 +1,2 @@
 # logarithm-calculator
-just logarithn calculator
+just logarithm calculator
