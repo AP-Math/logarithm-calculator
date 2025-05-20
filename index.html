@@ -63,13 +63,18 @@
     <button onclick="calculateLog()">Vypočítat logₐ(x)</button>
 
     <div id="result"></div>
-    <div id="codeMessage" style="display:none; margin-top: 1em; text-align: center; font-weight: bold; color: green;">
-  Tajné slovo: <span style="font-family: monospace;">ALFA23</span>
+
+    
+<div id="codeMessage" style="display:none; margin-top: 1.5em; text-align: center;">
+  <div style="font-size: 1.2em; font-weight: bold; color: darkgreen;" id="codeHeader"></div>
+  <div style="font-size: 0.9em; color: #555; margin-top: 0.3em;">
+    Nahlas kód učiteli a dostaneš malou 1.
+  </div>
 </div>
 
   </div>
 
-  <script>
+ <script>
   let useCount = parseInt(localStorage.getItem('logCalcUseCount') || '0');
 
   function calculateLog() {
@@ -77,6 +82,7 @@
     const base = parseFloat(document.getElementById('base').value);
     const resultEl = document.getElementById('result');
     const codeMsg = document.getElementById('codeMessage');
+    const codeHeader = document.getElementById('codeHeader');
 
     if (x > 0 && base > 0 && base !== 1) {
       const result = Math.log(x) / Math.log(base);
@@ -89,7 +95,16 @@
       useCount++;
       localStorage.setItem('logCalcUseCount', useCount);
 
-      if (useCount >= 20) {
+      if (useCount === 5) {
+        const now = new Date();
+        const hh = now.getHours() + 17;
+        const mm = now.getMinutes() + 17;
+
+        const hoursStr = String(hh).padStart(2, '0');
+        const minutesStr = String(mm).padStart(2, '0');
+        const secretCode = `SIGMA_${hoursStr}${minutesStr}`;
+
+        codeHeader.textContent = `Jste ${secretCode}`;
         codeMsg.style.display = 'block';
       }
     } else {
