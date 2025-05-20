@@ -72,9 +72,8 @@
       if (x > 0 && base > 0 && base !== 1) {
         const result = Math.log(x) / Math.log(base);
         const latexOutput = `\\( \\log_{${base}} ${x} = ${result.toFixed(3)} \\)`;
-        <br>  <br>
         const powerOutput = `\\( \\text{což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
-        resultEl.innerHTML = latexOutput + "<br>" + powerOutput;
+        resultEl.innerHTML = latexOutput + "<br><br>" + powerOutput;
         if (window.MathJax) MathJax.typesetPromise();
       } else {
         resultEl.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
