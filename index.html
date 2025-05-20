@@ -63,24 +63,40 @@
     <button onclick="calculateLog()">Vypočítat logₐ(x)</button>
 
     <div id="result"></div>
+    <div id="codeMessage" style="display:none; margin-top: 1em; text-align: center; font-weight: bold; color: green;">
+  Tajné slovo: <span style="font-family: monospace;">ALFA23</span>
+</div>
+
   </div>
 
   <script>
-    function calculateLog() {
-      const x = parseFloat(document.getElementById('value').value);
-      const base = parseFloat(document.getElementById('base').value);
-      const resultEl = document.getElementById('result');
+  let useCount = parseInt(localStorage.getItem('logCalcUseCount') || '0');
 
-      if (x > 0 && base > 0 && base !== 1) {
-        const result = Math.log(x) / Math.log(base);
-        const latexOutput = `\\( \\log_{${base}} ${x} = ${result.toFixed(3)} \\)`;
-        const powerOutput = `\\( \\text{což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
-        resultEl.innerHTML = latexOutput + "<br><br>" + powerOutput;
-        if (window.MathJax) MathJax.typesetPromise();
-      } else {
-        resultEl.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
+  function calculateLog() {
+    const x = parseFloat(document.getElementById('value').value);
+    const base = parseFloat(document.getElementById('base').value);
+    const resultEl = document.getElementById('result');
+    const codeMsg = document.getElementById('codeMessage');
+
+    if (x > 0 && base > 0 && base !== 1) {
+      const result = Math.log(x) / Math.log(base);
+      const latexOutput = `\\( \\log_{${base}} ${x} = ${result.toFixed(3)} \\)`;
+      const powerOutput = `\\( \\text{což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
+      resultEl.innerHTML = latexOutput + "<br><br>" + powerOutput;
+
+      if (window.MathJax) MathJax.typesetPromise();
+
+      useCount++;
+      localStorage.setItem('logCalcUseCount', useCount);
+
+      if (useCount >= 20) {
+        codeMsg.style.display = 'block';
       }
+    } else {
+      resultEl.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
