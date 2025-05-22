@@ -1,120 +1,168 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Logaritmická kalkulačka</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 2em;
-      background-color: #f9f9f9;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-    }
-    .calculator {
-      max-width: 400px;
-      margin: auto;
-      padding: 1em;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    label, input, button {
-      display: block;
-      width: 100%;
-      margin: 0.5em 0;
-      font-size: 1em;
-    }
-    button {
-      padding: 0.5em;
-      background: #007acc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-    #result {
-      font-weight: bold;
-      text-align: center;
-      margin-top: 1em;
-      font-size: 1.1em;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logaritmická kalkulačka</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    .calculator {
+      max-width: 400px;
+      margin: auto;
+      padding: 1em;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label, input, button {
+      display: block;
+      width: 100%;
+      margin: 0.5em 0;
+      font-size: 1em;
+    }
+    button {
+      padding: 0.5em;
+      background: #007acc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #equationDisplay {
+      font-weight: bold;
+      text-align: center;
+      margin-top: 1em;
+      font-size: 1.5em; /* Větší písmo pro algebraický zápis */
+      min-height: 1.5em; /* Zajistí, aby se prvek nezmenšil */
+    }
+    #result {
+      font-weight: bold;
+      text-align: center;
+      margin-top: 1em;
+      font-size: 1.1em;
+    }
+  </style>
 
-  <!-- MathJax pro vykreslení LaTeXu -->
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
 </head>
 <body>
-     <h1 style="font-size:1.4em; font-family: Verdana, sans-serif; text-align: center;">
-  Logaritmická kalkulačka 1<br>I2A – I2B
+ <h1 style="font-size:1.4em; font-family: Verdana, sans-serif; text-align: center;">
+  Logaritmická kalkulačka 1<br>I2A – I2B
 </h1>
-  <div class="calculator">
-    <label for="base">Zadejte základ a (např. 2):</label>
-    <input type="number" id="base" placeholder="Např. 2" step="any">
+  <div class="calculator">
+    <label for="base">Zadejte základ a (např. 2):</label>
+    <input type="number" id="base" placeholder="Např. 2" step="any">
 
-    <label for="value">Zadejte argument b (např. 8):</label>
-    <input type="number" id="value" placeholder="Např. 8" step="any">
+    <label for="value">Zadejte argument b (např. 8):</label>
+    <input type="number" id="value" placeholder="Např. 8" step="any">
 
-    <button onclick="calculateLog()">Vypočítat logₐ(b)</button>
+    <div id="equationDisplay"></div>     <button onclick="calculateLog()">Vypočítat logₐ(b)</button>
 
-    <div id="result"></div>
+    <div id="result"></div>
 
-    
+    
 <div id="codeMessage" style="display:none; margin-top: 1.5em; text-align: center;">
-  <div style="font-size: 1.2em; font-weight: bold; color: darkgreen;" id="codeHeader"></div>
-  <div style="font-size: 0.9em; color: #555; margin-top: 0.3em;">
-    <div style="font-size: 0.9em; color: #555; margin-top: 0.3em;">
-  Nahlas <strong>tajný</strong> kód učiteli a dostaneš malou 1.
+  <div style="font-size: 1.2em; font-weight: bold; color: darkgreen;" id="codeHeader"></div>
+  <div style="font-size: 0.9em; color: #555; margin-top: 0.3em;">
+    <div style="font-size: 0.9em; color: #555; margin-top: 0.3em;">
+  Nahlas <strong>tajný</strong> kód učiteli a dostaneš malou 1.
 </div>
-  </div>
+  </div>
 </div>
 
 <script>
-  // Vynuluj počítadlo při načtení stránky
-  localStorage.removeItem('logCalcUseCount');
-  let useCount = 0;
+  // Vynuluj počítadlo při načtení stránky
+  localStorage.removeItem('logCalcUseCount');
+  let useCount = 0;
 
-  function calculateLog() {
-    useCount++;
-    localStorage.setItem('logCalcUseCount', useCount);
-    console.log("Use count:", useCount);
+  // Elementy
+  const baseInput = document.getElementById('base');
+  const valueInput = document.getElementById('value');
+  const equationDisplay = document.getElementById('equationDisplay');
+  const resultEl = document.getElementById('result');
+  const codeMsg = document.getElementById('codeMessage');
+  const codeHeader = document.getElementById('codeHeader');
 
-    const x = parseFloat(document.getElementById('value').value);
-    const base = parseFloat(document.getElementById('base').value);
-    const resultEl = document.getElementById('result');
-    const codeMsg = document.getElementById('codeMessage');
-    const codeHeader = document.getElementById('codeHeader');
+  // Funkce pro aktualizaci algebraického zápisu
+  function updateEquationDisplay() {
+    const base = baseInput.value;
+    const value = valueInput.value;
 
-    if (x > 0 && base > 0 && base !== 1) {
-      const result = Math.log(x) / Math.log(base);
-      const latexOutput = `\\( \\log_{${base}} ${x} = ${result.toFixed(3)} \\)`;
-      const powerOutput = `\\( \\text{což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
-      resultEl.innerHTML = latexOutput + "<br><br>" + powerOutput;
+    let baseText = base ? base : 'a'; // Pokud je základ prázdný, zobraz 'a'
+    let valueText = value ? value : 'b'; // Pokud je argument prázdný, zobraz 'b'
 
-      if (window.MathJax) MathJax.typesetPromise();
-    } else {
-      resultEl.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
-    }
+    // Zkontrolujeme, zda jsou obě pole prázdná, pak nezobrazujeme nic
+    if (!base && !value) {
+      equationDisplay.innerHTML = '';
+    } else {
+      equationDisplay.innerHTML = `\\( \\log_{${baseText}} ${valueText} \\)`;
+    }
 
-    // Zobrazit tajný kód po X použitích
-    if (useCount === 3) {
-      const now = new Date();
-      const hh = now.getHours() + 17;
-      const mm = now.getMinutes() + 17;
+    // Aktualizovat MathJax, aby se rovnice vykreslila
+    if (window.MathJax) MathJax.typesetPromise([equationDisplay]);
+  }
 
-      const hoursStr = String(hh).padStart(2, '0');
-      const minutesStr = String(mm).padStart(2, '0');
-      const secretCode = `SIGMA_${hoursStr}${minutesStr}`;
+  // Funkce pro výpočet logaritmu
+  function calculateLog() {
+    useCount++;
+    localStorage.setItem('logCalcUseCount', useCount);
+    console.log("Use count:", useCount);
 
-      codeHeader.textContent = `Jste ${secretCode}`;
-      codeMsg.style.display = 'block';
-    }
-  }
+    const x = parseFloat(valueInput.value);
+    const base = parseFloat(baseInput.value);
+    
+    resultEl.innerHTML = ''; // Vymaže předchozí výsledek při novém výpočtu
+
+    if (x > 0 && base > 0 && base !== 1) {
+      const result = Math.log(x) / Math.log(base);
+      
+      // Aktuálně zobrazený zápis logaritmu
+      const currentBaseText = baseInput.value ? baseInput.value : 'a';
+      const currentValueText = valueInput.value ? valueInput.value : 'b';
+
+      // Doplní výsledek k aktuální rovnici
+      equationDisplay.innerHTML = `\\( \\log_{${currentBaseText}} ${currentValueText} = ${result.toFixed(3)} \\)`;
+      const powerOutput = `\\( \\text{což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
+      resultEl.innerHTML = "<br>" + powerOutput;
+
+
+      if (window.MathJax) MathJax.typesetPromise([equationDisplay, resultEl]);
+    } else {
+      resultEl.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
+      if (window.MathJax) MathJax.typesetPromise([resultEl]); // Aktualizovat i při chybě
+    }
+
+    // Zobrazit tajný kód po X použitích
+    if (useCount === 3) {
+      const now = new Date();
+      const hh = now.getHours() + 17;
+      const mm = now.getMinutes() + 17;
+
+      const hoursStr = String(hh).padStart(2, '0');
+      const minutesStr = String(mm).padStart(2, '0');
+      const secretCode = `SIGMA_${hoursStr}${minutesStr}`;
+
+      codeHeader.textContent = `Jste ${secretCode}`;
+      codeMsg.style.display = 'block';
+    }
+  }
+
+  // Přidáme posluchače událostí pro okamžitou aktualizaci
+  baseInput.addEventListener('input', updateEquationDisplay);
+  valueInput.addEventListener('input', updateEquationDisplay);
+
+  // Inicializujeme zobrazení rovnice při načtení stránky
+  updateEquationDisplay();
 </script>
 
 </body>
