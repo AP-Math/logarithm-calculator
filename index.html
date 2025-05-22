@@ -36,17 +36,25 @@
       border-radius: 5px;
     }
     #equationDisplay {
+      /* Zde se bude zobrazovat log_a b */
       font-weight: bold;
       text-align: center;
       margin-top: 1em;
       font-size: 1.5em; /* Větší písmo pro algebraický zápis */
       min-height: 1.5em; /* Zajistí, aby se prvek nezmenšil */
     }
-    #result {
+    #calculatedResult { /* Nový div pro výsledek */
       font-weight: bold;
       text-align: center;
+      margin-top: 0.5em; /* Menší mezera pod zápisem */
+      font-size: 1.2em; /* Velikost výsledku */
+      min-height: 1.2em; /* Zajistí, aby se prvek nezmenšil */
+    }
+    #powerFormResult { /* Div pro zápis ve tvaru mocniny */
+      text-align: center;
       margin-top: 1em;
-      font-size: 1.1em;
+      font-size: 1em;
+      min-height: 1em; /* Zajistí, aby se prvek nezmenšil */
     }
   </style>
 
@@ -57,7 +65,7 @@
 </head>
 <body>
  <h1 style="font-size:1.4em; font-family: Verdana, sans-serif; text-align: center;">
-  Logaritmická kalkulačka 2<br>I2A – I2B
+  Logaritmická kalkulačka 1<br>I2A – I2B
 </h1>
   <div class="calculator">
     <label for="base">Zadejte základ a (např. 2):</label>
@@ -66,9 +74,7 @@
     <label for="value">Zadejte argument b (např. 8):</label>
     <input type="number" id="value" placeholder="Např. 8" step="any">
 
-    <div id="equationDisplay"></div>     <button onclick="calculateLog()">Vypočítat logₐ(b)</button>
-
-    <div id="result"></div>
+    <div id="equationDisplay"></div>     <div id="calculatedResult"></div>     <div id="powerFormResult"></div>     <button onclick="calculateLog()">Vypočítat logₐ(b)</button>
 
     
 <div id="codeMessage" style="display:none; margin-top: 1.5em; text-align: center;">
@@ -89,7 +95,8 @@
   const baseInput = document.getElementById('base');
   const valueInput = document.getElementById('value');
   const equationDisplay = document.getElementById('equationDisplay');
-  const resultEl = document.getElementById('result');
+  const calculatedResult = document.getElementById('calculatedResult'); // Nový element pro výsledek
+  const powerFormResult = document.getElementById('powerFormResult'); // Nový element pro mocninný tvar
   const codeMsg = document.getElementById('codeMessage');
   const codeHeader = document.getElementById('codeHeader');
 
@@ -98,18 +105,20 @@
     const base = baseInput.value;
     const value = valueInput.value;
 
-    let baseText = base ? base : 'a'; // Pokud je základ prázdný, zobraz 'a'
-    let valueText = value ? value : 'b'; // Pokud je argument prázdný, zobraz 'b'
+    let baseText = base ? base : 'a';
+    let valueText = value ? value : 'b';
 
-    // Zkontrolujeme, zda jsou obě pole prázdná, pak nezobrazujeme nic
+    // Vyčistíme výsledky, dokud není proveden výpočet
+    calculatedResult.innerHTML = '';
+    powerFormResult.innerHTML = '';
+
     if (!base && !value) {
       equationDisplay.innerHTML = '';
     } else {
       equationDisplay.innerHTML = `\\( \\log_{${baseText}} ${valueText} \\)`;
     }
 
-    // Aktualizovat MathJax, aby se rovnice vykreslila
-    if (window.MathJax) MathJax.typesetPromise([equationDisplay]);
+    if (window.MathJax) MathJax.typesetPromise([equationDisplay, calculatedResult, powerFormResult]);
   }
 
   // Funkce pro výpočet logaritmu
@@ -121,25 +130,29 @@
     const x = parseFloat(valueInput.value);
     const base = parseFloat(baseInput.value);
     
-    resultEl.innerHTML = ''; // Vymaže předchozí výsledek při novém výpočtu
+    // Nejprve vyčistíme výsledky
+    calculatedResult.innerHTML = '';
+    powerFormResult.innerHTML = '';
 
     if (x > 0 && base > 0 && base !== 1) {
       const result = Math.log(x) / Math.log(base);
       
-      // Aktuálně zobrazený zápis logaritmu
       const currentBaseText = baseInput.value ? baseInput.value : 'a';
       const currentValueText = valueInput.value ? valueInput.value : 'b';
 
-      // Doplní výsledek k aktuální rovnici
-      equationDisplay.innerHTML = `\\( \\log_{${currentBaseText}} ${currentValueText} = ${result.toFixed(3)} \\)`;
+      // Zobrazíme kompletní rovnici s výsledkem
+      equationDisplay.innerHTML = `\\( \\log_{${currentBaseText}} ${currentValueText} = \\)`;
+      calculatedResult.innerHTML = `\\( ${result.toFixed(3)} \\)`; // Samostatně zobrazený výsledek
+
       const powerOutput = `\\( \\text{což znamená:}\\quad ${base}^{${result.toFixed(3)}} = ${x} \\)`;
-      resultEl.innerHTML = "<br>" + powerOutput;
+      powerFormResult.innerHTML = powerOutput;
 
 
-      if (window.MathJax) MathJax.typesetPromise([equationDisplay, resultEl]);
+      if (window.MathJax) MathJax.typesetPromise([equationDisplay, calculatedResult, powerFormResult]);
     } else {
-      resultEl.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
-      if (window.MathJax) MathJax.typesetPromise([resultEl]); // Aktualizovat i při chybě
+      calculatedResult.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
+      equationDisplay.innerHTML = ''; // Vyčistíme rovnici při chybě
+      if (window.MathJax) MathJax.typesetPromise([calculatedResult]);
     }
 
     // Zobrazit tajný kód po X použitích
