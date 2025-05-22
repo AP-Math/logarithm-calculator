@@ -83,10 +83,6 @@
   let useCount = 0;
 
   function calculateLog() {
-    useCount++;
-    localStorage.setItem('logCalcUseCount', useCount);
-    console.log("Use count:", useCount);
-
     const x = parseFloat(document.getElementById('value').value);
     const base = parseFloat(document.getElementById('base').value);
     const resultEl = document.getElementById('result');
@@ -100,22 +96,28 @@
       resultEl.innerHTML = latexOutput + "<br><br>" + powerOutput;
 
       if (window.MathJax) MathJax.typesetPromise();
+
+      // Úspěšný výpočet = inkrement počítadla
+      useCount++;
+      localStorage.setItem('logCalcUseCount', useCount);
+      console.log("Use count:", useCount);
+
+      // Zobrazit tajný kód po 3 úspěšných výpočtech
+      if (useCount === 3) {
+        const now = new Date();
+        const hh = now.getHours() + 17;
+        const mm = now.getMinutes() + 17;
+
+        const hoursStr = String(hh).padStart(2, '0');
+        const minutesStr = String(mm).padStart(2, '0');
+        const secretCode = `SIGMA_${hoursStr}${minutesStr}`;
+
+        codeHeader.textContent = `Jste ${secretCode}`;
+        codeMsg.style.display = 'block';
+      }
+
     } else {
       resultEl.textContent = "Neplatný vstup. a > 0, základ a > 0, základ a ≠ 1.";
-    }
-
-    // Zobrazit tajný kód po X použitích
-    if (useCount === 3) {
-      const now = new Date();
-      const hh = now.getHours() + 17;
-      const mm = now.getMinutes() + 17;
-
-      const hoursStr = String(hh).padStart(2, '0');
-      const minutesStr = String(mm).padStart(2, '0');
-      const secretCode = `SIGMA_${hoursStr}${minutesStr}`;
-
-      codeHeader.textContent = `Jste ${secretCode}`;
-      codeMsg.style.display = 'block';
     }
   }
 </script>
