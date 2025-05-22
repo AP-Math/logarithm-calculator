@@ -107,7 +107,12 @@
     // Zobrazíme náhled, pokud je alespoň jedno pole vyplněné
     if (base !== '' || value !== '') {
       equationPreview.innerHTML = `\\( \\log_{${baseText}} ${valueText} \\)`;
-      if (window.MathJax) MathJax.typesetPromise([equationPreview]);
+      // Explicitně nastavit stav MathJaxu pro tento element
+      if (window.MathJax) {
+        MathJax.startup.promise.then(() => {
+          MathJax.typesetPromise([equationPreview]);
+        });
+      }
     } else {
       equationPreview.innerHTML = ''; // Skryjeme náhled, pokud jsou obě pole prázdná
     }
@@ -139,7 +144,12 @@
       // Vložíme výsledek a mocninný tvar do původního divu #result
       resultEl.innerHTML = latexOutput + "<br><br>" + powerOutput;
 
-      if (window.MathJax) MathJax.typesetPromise([resultEl, equationPreview]); // Překreslíme i náhled
+      // Explicitně nastavit stav MathJaxu pro oba elementy
+      if (window.MathJax) {
+        MathJax.startup.promise.then(() => {
+          MathJax.typesetPromise([resultEl, equationPreview]);
+        });
+      }
     } else {
       resultEl.textContent = "Neplatný vstup. x > 0, základ > 0 a základ ≠ 1.";
     }
